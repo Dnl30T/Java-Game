@@ -1,0 +1,40 @@
+tiles[xx + (yy * worldWidth)] = new SolidTile(xx * 16,yy * 16,Tileset.Grass_Tile);
+					switch(currentPixel) {
+						case 0xFF000000:
+							//grass
+							tiles[xx + (yy * worldWidth)] = new SolidTile(xx * 16,yy * 16,Tileset.Grass_Tile);
+						case 0xFFFFFFFF:
+							//wall
+							tiles[xx + (yy * worldWidth)] = new SolidTile(xx * 16,yy * 16,Tileset.Wall_Tile);
+						case 0xFFFF0000:
+							tiles[xx + (yy * worldWidth)] = new SolidTile(xx * 16,yy * 16,Tileset.Grass_Tile);
+							//Player
+						case 0xFFFF6A00:
+							//Enemy
+						case 0xFF7F3300:
+							//med kit
+						case 0xFFFF00DC:
+							//arrow
+						case 0xFFFFD800:
+							//bow
+						default:
+							tiles[xx + (yy * worldWidth)] = new SolidTile(xx * 16,yy * 16,Tileset.Grass_Tile);
+					}
+					/*
+		for(int i = 0; i < 4; i++) {
+			playerRight[i] = Main.spritesheet.getSprite(0+(i*16), 80, 16, 16);
+		}
+		for(int i = 0; i < 4; i++) {
+			playerLeft[i] = Main.spritesheet.getSprite(0+(i*16), 80, 16, 16);
+		}
+		for(int i = 0; i < 4; i++) {
+			playerIdle[i] = Main.spritesheet.getSprite(0+(i*16), 80, 16, 16);
+		}
+		for(int i = 0; i < 4; i++) {
+			playerUp[i] = Main.spritesheet.getSprite(0+(i*16), 80, 16, 16);
+		}
+		for(int i = 0; i < 4; i++) {
+			playerDown[i] = Main.spritesheet.getSprite(0+(i*16), 80, 16, 16);
+		}
+	}
+	*/
