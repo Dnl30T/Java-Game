@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-
 import com.dnlStudios.main.Main;
 import com.dnlStudios.world.Camera;
 import com.dnlStudios.world.Hud;
@@ -15,6 +14,7 @@ public class Entity {
 	public static BufferedImage En_Arrow = Main.spritesheet.getSprite(128, 16, 16, 16);
 	public static BufferedImage En_Bow = Main.spritesheet.getSprite(128, 32, 16, 16);
 	public static BufferedImage En_Enemy = Main.spritesheet.getSprite(176, 0, 16, 16);
+	public static BufferedImage En_Coin = Main.spritesheet.getSprite(176, 160, 9, 7);
 
 	protected double x;
 	protected double y;

@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -20,13 +21,14 @@ import javax.swing.JFrame;
 
 import com.dnlStudios.entities.Enemy;
 import com.dnlStudios.entities.Entity;
-import com.dnlStudios.entities.Player;
 import com.dnlStudios.entities.Projectile;
 import com.dnlStudios.graphics.Spritesheet;
+import com.dnlStudios.player.Player;
+import com.dnlStudios.player.StaminaController;
 import com.dnlStudios.world.Hud;
 import com.dnlStudios.world.World;
 
-public class Main extends Canvas implements Runnable,KeyListener,MouseListener{
+public class Main extends Canvas implements Runnable,KeyListener,MouseListener,MouseMotionListener{
 	
 	//Menu
 	public Menu menu;
@@ -45,11 +47,14 @@ public class Main extends Canvas implements Runnable,KeyListener,MouseListener{
 	public int framesGO = 0;
 	public static int currentLevel = 0;
 	public int maxLevel = 2;
+	public boolean nextLevel;
 	
 	//images and rendering
 	private BufferedImage image;	
 	public static Spritesheet spritesheet;
 	public static Hud hud;
+	//public InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("CANTERBURY.ttf");
+	//public Font newfont;
 	
 	//entities
 	public static List<Entity> entities;
@@ -68,8 +73,18 @@ public class Main extends Canvas implements Runnable,KeyListener,MouseListener{
 	public static int frames;
 	
 	public Main() {
+		/*
+		try {
+			newfont = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(16f);
+		} catch (FontFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		*/
 		rand = new Random();
 		addKeyListener(this);
+		addMouseMotionListener(this);
 		addMouseListener(this);
 		this.setPreferredSize(new Dimension(sWidth,sHeight));
 		window();
@@ -156,9 +171,10 @@ public class Main extends Canvas implements Runnable,KeyListener,MouseListener{
 			for(int i = 0; i < projectile.size(); i++) {
 				projectile.get(i).tick();
 			}
-			if(enemies.size() == 0) {
+			if(enemies.size() == 0 && nextLevel) {
 				//next level
 				//System.out.println("todos mortos");
+				nextLevel=false;
 				currentLevel++;
 				if(currentLevel > maxLevel) {
 					currentLevel = 0;
@@ -249,7 +265,27 @@ public class Main extends Canvas implements Runnable,KeyListener,MouseListener{
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_Q) {
+			player.inventory.usePotion();
+		}
+		if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
+			if(StaminaController.stamina - 100 >= 0)
+				player.tp = true;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_CONTROL) {
+			if(player.stamina.getStaminaFull()) {
+				player.isRunning = true;
+			}
+		}
+		if(e.getKeyCode() == KeyEvent.VK_E) {
+			player.changeWeapon++;
+			if(player.changeWeapon > player.maxChange) {
+				player.changeWeapon = 0;
+			}
+		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+			if(gameState == "normal" && enemies.size()==0)
+				nextLevel=true;
 			if(gameState == "gameover")
 				restart = true;
 			if(gameState == "menu") 
@@ -291,17 +327,20 @@ public class Main extends Canvas implements Runnable,KeyListener,MouseListener{
 	@Override
 	public void keyReleased(KeyEvent e) {
 		//left right
-				if(e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
-					player.right = false;
-				}else if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
-					player.left = false;
-				}
-				//up down
-				if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
-					player.up = false;
-				}else if(e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
-					player.down = false;
-				}
+		if(e.getKeyCode() == KeyEvent.VK_CONTROL) {
+			player.isRunning = false;
+		}
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
+			player.right = false;
+		}else if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
+			player.left = false;
+		}
+		//up down
+		if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
+			player.up = false;
+		}else if(e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
+			player.down = false;
+		}
 	}
 
 	@Override
@@ -311,7 +350,10 @@ public class Main extends Canvas implements Runnable,KeyListener,MouseListener{
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		player.isShooting = true;
+		if(player.changeWeapon == 1)
+			player.isShooting = true;
+		else if(player.changeWeapon == 0)
+				player.isAtacking = true;
 		player.shotType = 2;
 		player.mouseX = (e.getX() / 3);
 		player.mouseY = (e.getY() / 3);
@@ -330,5 +372,17 @@ public class Main extends Canvas implements Runnable,KeyListener,MouseListener{
 	@Override
 	public void mouseExited(MouseEvent e) {
 		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		player.mouseX = (e.getX() / 3);
+		player.mouseY = (e.getY() / 3);
 	}
 }

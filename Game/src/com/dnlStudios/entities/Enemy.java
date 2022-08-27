@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import com.dnlStudios.main.Main;
+import com.dnlStudios.projectiles.SwordHitBox;
 import com.dnlStudios.world.Camera;
 import com.dnlStudios.world.Hud;
 import com.dnlStudios.world.Tileset;
@@ -15,13 +16,17 @@ import com.dnlStudios.world.World;
 public class Enemy extends Entity{
 	
 	public int health;
-	protected double speed;
+	public int maxHealth;
+	public double speed;
 	protected double maxSpeed;
 	protected int tickDistance;
+	
+	public boolean isFrozen, isPoisoned;
 	
 	protected int enW = 16,enH = 16;
 	protected int maskX = 0, maskY = 0;
 	
+	protected boolean invincibleFrame; 
 	protected boolean isDamaged = false;
 	protected int dframes = 0, dmaxFrames = 5, dindex = 0, dmaxIndex = 3;
 
@@ -31,19 +36,25 @@ public class Enemy extends Entity{
 	
 	protected void setHealth(int health){
 		this.health = health;
+		this.maxHealth = health;
 	}
-	
 	public void damageEnemy(double damageTaken) {
-		if(health > 0)
-			//System.out.println(this.health);
-			health -= damageTaken;
-			//System.out.println(this.health);
-			isDamaged = true;
+		if(!invincibleFrame) {
+			if(health > 0) {
+				health -= damageTaken;
+				isDamaged = true;
+				invincibleFrame = true;
+			}
+		}
 		if(health <= 0) {
 			Main.entities.remove(this);
 			Main.enemies.remove(this);
+			for(int i = 0; i<Main.rand.nextInt(1,4);i++) {
+				Main.entities.add(new Coin(this.getX(), this.getY(), 16, 16, Entity.En_Coin));
+			}
 			Hud.score++;
 		}
+		
 	}
 	
 	public boolean checkPlayerCollision() {
@@ -70,13 +81,13 @@ public class Enemy extends Entity{
 	public void collidingEntity() {
 		for(int i = 0; i < Main.projectile.size(); i++) {
 			Entity e = Main.projectile.get(i);
-			
-			//System.out.println(e.getX()+" "+e.getY());
-			
 			if(e instanceof Projectile) {
 				if(Entity.isColliding(this, e)) {
-					damageEnemy(Main.projectile.get(i).damage);
-					Main.projectile.remove(i);
+					Main.projectile.get(i);
+					//this.isFrozen=true;
+					damageEnemy(Projectile.damage);
+					if(e instanceof SwordHitBox == false)
+						Main.projectile.remove(i);
 					return;
 				}
 			}

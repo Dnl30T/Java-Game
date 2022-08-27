@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import com.dnlStudios.entities.Coin;
 import com.dnlStudios.entities.Enemy;
+import com.dnlStudios.entities.Entity;
 import com.dnlStudios.main.Main;
 import com.dnlStudios.world.Camera;
 import com.dnlStudios.world.Hud;
@@ -19,6 +21,7 @@ public class SkullEnemy extends Enemy{
 	public int facingDirection = 1;
 	
 	protected int frames = 0, maxFrames = 10, index = 0, maxIndex = 2;
+	protected int Fframes = 0, FmaxFrames = 15, Findex = 0, FmaxIndex = 2;
 	//protected int enW,enH;
 	//protected int maskX, maskY;
 	
@@ -31,7 +34,7 @@ public class SkullEnemy extends Enemy{
 	public SkullEnemy(int x, int y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);
 		this.setCollisionMask(0, 0, 16, 16);
-		setHealth(75);
+		setHealth(100);
 		this.enH = 16;
 		this.enW = 16;
 		this.maskX = 0;
@@ -49,8 +52,38 @@ public class SkullEnemy extends Enemy{
 		for(int i = 0; i < 3; i++)
 			enSprLeft[i] = Main.spritesheet.getSprite(256 + (i*16), 112, 16, 25);
 	}
+	
+	public void damageEnemy(double damageTaken) {
+		if(!invincibleFrame) {
+			if(health > 0) {
+				health -= damageTaken;
+				//System.out.println(damageTaken);
+				if(isFrozen) {
+					isFrozen=false;
+					health-=10;
+				}
+				//System.out.println(health);
+				isDamaged = true;
+				invincibleFrame = true;
+			}
+		}
+		if(health <= 0) {
+			Main.entities.remove(this);
+			Main.enemies.remove(this);
+			Hud.score++;
+			Main.entities.add(new Coin(this.getX(), this.getY(), 16, 16, Entity.En_Coin));
+		}
+		
+	}
+	
 	public void tick() {
 		speed = Main.rand.nextDouble(speed,maxSpeed);
+		if(this.health <= this.maxHealth/2) {
+			this.maxSpeed = 1.2;
+		}
+		if(this.health <= this.maxHealth/5) {
+			this.maxSpeed = 1.5;
+		}
 		collidingEntity();
 		if(this.x >= Camera.x - tickDistance
 			&& this.y >= Camera.y - tickDistance
@@ -105,6 +138,7 @@ public class SkullEnemy extends Enemy{
 				if(dindex > dmaxIndex) {
 					dindex = 0;
 					this.isDamaged=false;
+					this.invincibleFrame=false;
 				}
 			}
 		}

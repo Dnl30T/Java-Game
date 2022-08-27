@@ -86,13 +86,14 @@ public class MiniMushroomEnemy extends Enemy{
 			}
 		}
 		if(isDamaged) {
-			dframes++;
-			if(dframes == dmaxFrames) {
-				dframes = 0;
-				dindex++;
-				if(dindex > dmaxIndex) {
-					dindex = 0;
+			frames++;
+			if(frames == maxFrames) {
+				frames = 0;
+				index++;
+				if(index > maxIndex) {
+					index = 0;
 					this.isDamaged=false;
+					this.invincibleFrame=false;
 				}
 			}
 		}

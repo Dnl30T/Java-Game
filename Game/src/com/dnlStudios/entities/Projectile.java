@@ -14,8 +14,12 @@ public class Projectile extends Entity{
 	private double dx, dy;
 	public double spd = 4, angle;
 	private BufferedImage sprite;
-	public int damage;
+	public static int damage;
 	private boolean getAngle;
+	public boolean killSelf;
+	
+	public boolean frostDamage;
+	public boolean venomDamage;
 
 	public Projectile(int x, int y, int width, int height, BufferedImage sprite,double dx2,double dy2) {
 		super(x, y, width, height, sprite);
@@ -25,10 +29,13 @@ public class Projectile extends Entity{
 	}
 	
 	public void setDamage(int damage) {
-		this.damage = damage;
+		Projectile.damage = damage;
 	}
 	
 	public void tick() {
+		if(killSelf) {
+			Main.projectile.remove(this);
+		}
 		//System.out.println(this.getX()+" "+this.getY()+" "+this.width+" "+this.height);
 		if(World.isFree((int)x,(int)y+6,width,height)) {
 			x+=dx*spd;

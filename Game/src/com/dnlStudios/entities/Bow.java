@@ -12,10 +12,10 @@ public class Bow extends Entity{
 	public Bow(int x, int y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);
 		
-		bowRightSpr = new BufferedImage[4];
+		bowRightSpr = new BufferedImage[5];
 
-		for(int i = 0; i < 4; i++) {
-			bowRightSpr[i] = Main.spritesheet.getSprite(112+(i*16), 48, 16, 16);
+		for(int i = 0; i < 5; i++) {
+			bowRightSpr[i] = Main.spritesheet.getSprite(96+(i*16), 64, 16, 16);
 		}
 	}
 

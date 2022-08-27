@@ -12,13 +12,14 @@ import com.dnlStudios.world.World;
 
 public class MushroomEnemy extends Enemy{
 	
-	protected double speed = 0.2;
-	protected double maxSpeed = 0.6;
+	protected double speed = 0.4;
+	protected double maxSpeed = 0.7;
 	protected int tickDistance = 340;
 	
 	public int facingDirection = 1;
 	
 	protected int frames = 0, maxFrames = 10, index = 0, maxIndex = 2;
+	protected int Fframes = 0, FmaxFrames = 15, Findex = 0, FmaxIndex = 2;
 	//protected int enW,enH;
 	//protected int maskX, maskY;
 	
@@ -66,7 +67,14 @@ public class MushroomEnemy extends Enemy{
 			enSprLeft[i] = Main.spritesheet.getSprite(304 + (i*16), 48, 16, 16);
 	}
 	public void tick() {
-		speed = Main.rand.nextDouble(speed,maxSpeed);
+		if(isFrozen) {
+			speed=0;
+			maxSpeed=0;
+		}else {
+			speed=0.4;
+			maxSpeed=0.7;
+			speed = Main.rand.nextDouble(speed,maxSpeed);
+		}
 		collidingEntity();
 		if(this.x >= Camera.x - tickDistance
 			&& this.y >= Camera.y - tickDistance
@@ -97,12 +105,24 @@ public class MushroomEnemy extends Enemy{
 							x	-= speed;
 							facingDirection = 4;
 						}
-						frames++;
-						if(frames == maxFrames) {
-							frames = 0;
-							index++;
-							if(index > maxIndex) {
-								index = 0;
+						if(!isFrozen) {
+							frames++;
+							if(frames == maxFrames) {
+								frames = 0;
+								index++;
+								if(index > maxIndex) {
+									index = 0;
+								}
+							}
+						}else {
+							Fframes++;
+							if(Fframes == FmaxFrames) {
+								Fframes = 0;
+								Findex++;
+								if(Findex > FmaxIndex) {
+									Findex = 0;
+									isFrozen=false;
+								}
 							}
 						}
 					}
@@ -114,13 +134,14 @@ public class MushroomEnemy extends Enemy{
 			}
 		}
 		if(isDamaged) {
-			dframes++;
-			if(dframes == dmaxFrames) {
-				dframes = 0;
-				dindex++;
-				if(dindex > dmaxIndex) {
-					dindex = 0;
+			frames++;
+			if(frames == maxFrames) {
+				frames = 0;
+				index++;
+				if(index > maxIndex) {
+					index = 0;
 					this.isDamaged=false;
+					this.invincibleFrame=false;
 				}
 			}
 		}

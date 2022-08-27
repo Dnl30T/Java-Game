@@ -3,6 +3,7 @@ package com.dnlStudios.entities;
 import java.awt.image.BufferedImage;
 
 import com.dnlStudios.main.Main;
+import com.dnlStudios.player.Player;
 
 public class Lifepack extends Entity{
 	

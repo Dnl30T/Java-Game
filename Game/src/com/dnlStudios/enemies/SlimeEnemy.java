@@ -17,6 +17,7 @@ public class SlimeEnemy extends Enemy{
 	protected int tickDistance = 90;
 	
 	protected int frames = 0, maxFrames = 10, index = 0, maxIndex = 2;
+	protected int Fframes = 0, FmaxFrames = 15, Findex = 0, FmaxIndex = 2;
 	//protected int enW,enH;
 	//protected int maskX, maskY;
 	
@@ -37,7 +38,14 @@ public class SlimeEnemy extends Enemy{
 			enSpr[i] = Main.spritesheet.getSprite(176 + (i*16), 0 + (type*16), 16, 16);
 	}
 	public void tick() {
-		speed = Main.rand.nextDouble(speed,maxSpeed);
+		if(isFrozen) {
+			speed=0;
+			maxSpeed=0;
+		}else {
+			speed=0.2;
+			maxSpeed=0.8;
+			speed = Main.rand.nextDouble(speed,maxSpeed);
+		}
 		collidingEntity();
 		if(this.x >= Camera.x - tickDistance
 			&& this.y >= Camera.y - tickDistance
@@ -65,12 +73,24 @@ public class SlimeEnemy extends Enemy{
 								) {
 							y	-= speed;
 						}
-						frames++;
-						if(frames == maxFrames) {
-							frames = 0;
-							index++;
-							if(index > maxIndex) {
-								index = 0;
+						if(!isFrozen) {
+							frames++;
+							if(frames == maxFrames) {
+								frames = 0;
+								index++;
+								if(index > maxIndex) {
+									index = 0;
+								}
+							}
+						}else {
+							Fframes++;
+							if(Fframes == FmaxFrames) {
+								Fframes = 0;
+								Findex++;
+								if(Findex > FmaxIndex) {
+									Findex = 0;
+									isFrozen=false;
+								}
 							}
 						}
 					}
@@ -89,6 +109,7 @@ public class SlimeEnemy extends Enemy{
 				if(dindex > dmaxIndex) {
 					dindex = 0;
 					this.isDamaged=false;
+					this.invincibleFrame=false;
 				}
 			}
 		}
